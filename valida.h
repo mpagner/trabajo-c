@@ -13,4 +13,4 @@ int minimo_duracion_sub(size_t ini, size_t fin);
 
 int maximo_duracion_sub(size_t ini, size_t fin);
 
-int chars_por_seg(int total_carac, size_t duracion);
+int chars_por_seg(int total_carac, size_t ini, size_t fin);
