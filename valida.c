@@ -50,6 +50,6 @@ int maximo_duracion_sub(size_t ini, size_t fin){
     return ((fin - ini) < 7000);
 }
 int chars_por_seg(int total_carac, size_t ini, size_t fin){
-    float duracion_segs = (fin - ini) * 0,001;
+    float duracion_segs = (fin - ini) * 0.001;
     return ((float)(total_carac / duracion_segs) > 25);
 }
