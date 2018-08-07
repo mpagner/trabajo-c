@@ -1,24 +1,24 @@
 #include "funciones.h"
 #include "sub.h"
 
-//aca creo la estructura que va a tener todos lso subtitulos
-			//IDEA hacer punteros a funciones a esta funcion para reutilizar codigo
-struct arreglo_sub * abrir(char * s,FILE * entrada){  //tengo que pasar la entrada por referencia????
+//creo la estructura que va a tener todos los subtitulos
+
+struct arreglo_sub * abrir(void * s,FILE * entrada){
 	struct arreglo_sub * sub;
-	entrada = fopen (s,"rb+");
+	entrada = fopen ((char *)s,"r+");
 	if(entrada == NULL){
-		fprintf(stderr,"No se pudo abrir el archivo %s.\n",s);
+		fprintf(stderr,"No se pudo abrir el archivo %s.\n",(char *)s);
 	}
 	sub = inicializar(entrada);
+	fclose(entrada);
 	return sub;
 }
 
-void salir(char * s,FILE ** salida){
-	printf("El archivo de salida va a ser: %s",s);
-	getchar();
-	*salida = fopen (s,"a");
+void salir(void * s,FILE ** salida){
+	printf("El archivo de salida va a ser: %s\n",(char *) s);
+	*salida = fopen ((char *)s,"w");
 	if(*salida == NULL){
-		fprintf(stderr,"No se pudo abrir el archivo %s.\n",s);
+		fprintf(stderr,"No se pudo abrir el archivo %s.\n",(char *)s);
 	}
 }
 
@@ -27,122 +27,112 @@ void modificar_salida(FILE ** salida,struct arreglo_sub * arr_sub){
 	fclose(*salida);
 }
 
-struct arreglo_sub * borrar_indice(int indice,struct arreglo_sub * arr_sub){
-
-	for(int i = 0; i <= arr_sub->ocupado; i++){
-		printf("Indice:%d  \n Texto: %s \n",arr_sub->array[i].indice,arr_sub->array[i].texto);//(arr_sub + i * 8)->indice,(arr_sub + i * 8)->texto);
-	}
-	int i = 0;
+struct arreglo_sub * borrar_indice(void * args,struct arreglo_sub * arr_sub){
+	int *tmp = (int *) args;
+	int indice = *tmp;
+	int i = 1;
 	while(i <= arr_sub->ocupado){
-		if(arr_sub->array[i].indice == indice){
+		if(arr_sub->a[i].indice == indice){
 			break;
 		}
 		i++;
 	}
-	if(i >= arr_sub->ocupado && indice != arr_sub->array[i].indice){
+	if(i >= arr_sub->ocupado && indice != arr_sub->a[i].indice){
 		printf("No se encontro el indice a borrar.");
 	}
 	else{
 		for (;i<arr_sub->ocupado;i++){
-			arr_sub->array[i] = arr_sub->array[i + 1];
+			arr_sub->a[i + 1].indice = i + 1;
+			arr_sub->a[i] = arr_sub->a[i + 1];
 		}
-		//free((void * )arr_sub[dim_l]);	deberia liberar al sorete que quedo dando vueltas
-	}
-	for(int i = 0; i <= arr_sub->ocupado; i++){
-		printf("Indice:%d  \n Texto: %s \n",arr_sub->array[i].indice,arr_sub->array[i].texto);//(arr_sub + i * 8)->indice,(arr_sub + i * 8)->texto);
-	}
 
+		arr_sub->ocupado = arr_sub->ocupado ;
+	}
 	return arr_sub;
 }
 
 
+struct arreglo_sub * insertar(void *args, struct arreglo_sub * arreglo){
 
-
-/*int busquedaBinaria(struct sub *vector, int n, int indice) { // n va a ser dim_l
-  	int centro,inf=0,sup=n-1;
-   	while(inf<=sup){
-      		centro=((sup-inf)/2)+inf;
-      		if(vector[centro].indice==indice){
-			return centro;
-		}
-      		else if(indice < vector[centro].indice){
-				sup=centro-1;
-			}
-      		      else{
-				inf=centro+1;
-			}
-  	 }
-   	return -1;
-}*/
-
-/*
-struct arreglo_sub * insertar(struct arreglo_sub * arreglo){
-
-	int i = 0, pos;
-	char *dato1 = malloc(sizeof(char) * 100);
-	struct sub *dato = malloc(sizeof(struct sub)) ;
-	printf("Ingresar informacion del dato:\n");
-	scanf("%d",&dato->indice);
-	scanf("%d",&dato->inicio.tm_hour);
-
-		scanf("%d",&dato->inicio.tm_min);
-
-		scanf("%d",&dato->inicio.tm_sec);
-
-		scanf("%d",&dato->inicio.tm_ml);
-		scanf("%d",&dato->fin.tm_hour);
-
-		scanf("%d",&dato->fin.tm_min);
-
-		scanf("%d",&dato->fin.tm_sec);
-
-		scanf("%d",&dato->fin.tm_ml);
-	dato->texto = malloc(sizeof(char) * 100);
-
-	while(scanf("%s",dato->texto) != EOF){
-		printf("%d",pos);
-		//scanf("%s",dato->texto);
-	}
-	printf("Paso el while\n");
-	getchar();
-	/*if((pos = busquedaBinaria(arreglo,dim_l,dato->indice)) == -1){
-		printf("No se encontro la posicion solicitada.\n");
-	}
-	else{
-		//if()//hay espacio ??
-		if((arreglo + dato->indice * 8)->indice != 0){ // no funciona esta parte
-		for(dim_l; dim_l >= dato->indice;dim_l--){
-			*(arreglo + (dim_l + 1) * 8 ) = *(arreglo + (dim_l + 1) * 8 );
-		}
-		*(arreglo + dato->indice * 8) = *dato;
-		}
-		else{	//esta parte (que inserta directamente) funciona
-			*(arreglo + dato->indice * 8) = *dato;
-		}
-	//}
+	struct sub *dato = (struct sub *) args;
+	int j;
 
 	if(arreglo->ocupado == arreglo->tamanio){
-    		arreglo->tamanio *= 2;
-    		arreglo->a = (struct sub *)realloc(arreglo->a, arreglo->tamanio * sizeof(struct sub));
- 	 }
-  	for(int i = arreglo->ocupado; i >= dato->indice - 1; i--){
-		arreglo->a[i] = arreglo->a[i - 1];
+    		arreglo->a = (struct sub *)realloc(arreglo->a, arreglo->tamanio * sizeof(struct sub) + 1 * sizeof(struct sub));
+ 	}
 
+	if(dato->fin < arreglo->a[0].inicio){
+		j = 0;
 	}
-	arreglo->a[dato->indice - 1] = *dato;
-	printf("Indice:%d  \n Texto: %s \n",arreglo->a[dato->indice].indice,arreglo->a[dato->indice].texto);
-	//free(dato);
+	else{
+		j = 1;
+		while(j < arreglo->ocupado && dato->inicio > arreglo->a[j].fin){
+			j++;
+		}
+	}
+	if(j < arreglo->ocupado){
+		for(int i = arreglo->ocupado; i >= j ; i--){
+			arreglo->a[i].indice = arreglo->a[i].indice + 1;
+			arreglo->a[i + 1] = arreglo->a[i];
+		}
+		dato->texto = realloc(dato->texto,strlen(dato->texto) + sizeof(char));
+		strcat(dato->texto,"\n");
+	}
+
+	dato->indice = j + 1;
+	arreglo->a[j] = *dato;
+	arreglo->ocupado += 1;
+	free(dato);
 	return arreglo;
 }
-*/
 
-long process_operation(struct arreglo_opciones *optargs) {
+
+void validar(struct arreglo_sub * arr_sub){
+
+	if ((arr_sub->a[0].indice) != 1){
+		error(1, "El primer indice no es 1.");
+	}
+
+	//se trabaja con un sub
+	for(int i = 0; i < arr_sub->ocupado; i++){
+		int total_carac = procesar_texto (arr_sub->a[i].texto, arr_sub->a[i].indice);
+		if(minimo_duracion_sub(arr_sub->a[i].inicio,arr_sub->a[i].fin) == 1){
+			error(arr_sub->a[i].indice,"El subtitulo dura menos de 1 seg.");
+		}
+
+		if(maximo_duracion_sub(arr_sub->a[i].inicio,arr_sub->a[i].fin)){
+			error(arr_sub->a[i].indice,"El subtitulo dura mas de 7 seg.");
+		}
+
+		if(chars_por_seg(total_carac,arr_sub->a[i].inicio,arr_sub->a[i].fin)){
+			error(arr_sub->a[i].indice,"El subtitulo tiene demasiados caracteres por segundo.");
+		}
+		if(i != arr_sub->ocupado - 1){
+
+			if((arr_sub->a[i].indice+1) != arr_sub->a[i+1].indice){
+				error(arr_sub->a[i].indice,"Los indices no son consecutivos ordenados.");
+			}
+
+			if(solapados_sub(arr_sub->a[i].fin, arr_sub->a[i+1].inicio) == 1){
+				error(arr_sub->a[i].indice,"El subtitulo esta solapado con el siguiente.");
+
+			} else {
+
+				if (separacion_sub(arr_sub->a[i].fin, arr_sub->a[i].inicio)) {
+					error(arr_sub->a[i].indice,"Hay menos de 75 ms. entre el subtitulo y el siguiente.");
+				}
+			}
+		}
+	}
+
+}
+
+
+void procesar_operacion(struct arreglo_opciones *optargs) {
   	FILE * entrada = NULL, * salida = NULL;
 	struct arreglo_sub * arr_sub;
-	long tmp = 123;
+
 for(int i = 0; i <= optargs->ocupado ;i++){
-	printf("Entrada nro: %d",i);
-	getchar();
   switch (optargs->opciones[i].opcion) {
 
    case IN:
@@ -154,22 +144,32 @@ for(int i = 0; i <= optargs->ocupado ;i++){
 	salir(optargs->opciones[i].args,&salida);
 	continue;
    case BORRAR:
-      printf("Borrando...\n");
-      	arr_sub = borrar_indice(4,arr_sub);	/*optargs->opciones[i].args aca deberia tener guardado el argumento oara mandar */
+	if(salida != NULL){
+      		printf("Borrando...\n");
+      		arr_sub = borrar_indice(optargs->opciones[i].args,arr_sub);
+	}
+	else{
+		printf("No se puede borrar, no hay archivo de salida.\n El argumento -o es obligatorio cuando hay opciones que modifican el archivo de entrada.");
+	}
       	continue;
-	/*
     case INSERTAR:
-      printf("Insertando...\n");
-	arr_sub = insertar(arr_sub);
+	if(salida != NULL){
+      		printf("Insertando...\n");
+		arr_sub = insertar(optargs->opciones[i].args,arr_sub);
+	}
+	else{
+		printf("No se puede Insertar, no hay archivo de salida.\n El argumento -o es obligatorio cuando hay opciones que modifican el archivo de entrada.");
+	}
 	continue;
-	*/
-    /*case VALIDAR:
-
-      continue;*/
+    case VALIDAR:
+		printf("Validando...\n");
+	      	validar(arr_sub);
+      continue;
   }
 
-}
-	modificar_salida(&salida,arr_sub);
-	return tmp;
-
+}	if(salida != NULL){
+		modificar_salida(&salida,arr_sub);
+	}
+	free(arr_sub->a);
+	free(arr_sub);
 }

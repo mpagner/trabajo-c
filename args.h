@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
-#include "funciones.h"
+#include <stdarg.h>
+#include "sub.h"
 
 #define BORRAR 		1
 #define INSERTAR	2
@@ -19,11 +19,10 @@ enum{
 	IN_I,
 	OUT_I
 };
-extern int errno;
 
 struct arr{
 	int opcion;
-	char args[100];
+	void * args;
 };
 
 struct arreglo_opciones{
@@ -31,10 +30,6 @@ struct arreglo_opciones{
 	int tamanio;
 	int ocupado;
 };
-
-
-
-
 
 struct arreglo_opciones *recuperar_args(int argc, char **argv);
 

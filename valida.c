@@ -11,14 +11,15 @@ void error(int indice, char *errstr){
 */
 
 int procesar_texto (char* text, int indice){
-    int total_carac = 0, saltos = 0, carac_linea = 0, nueva_linea = 0;
+    int total_carac = 0, salto = 0, carac_linea = 0, nueva_linea = 0;
     for(int i = 0; text[i] != '\0'; i++){
-        total_carac++;
         if (text[i] == '\n'){
             salto++;
             nueva_linea = 1;
+        } else {
+            total_carac++;
         }
-        if !(nueva_linea){
+        if (!nueva_linea){
             carac_linea++;
         } else {
             if (carac_linea > 36){
@@ -35,21 +36,36 @@ int procesar_texto (char* text, int indice){
 }
 
 int solapados_sub(size_t fin_prev, size_t ini_sig){
-    return (fin_prev >= ini_sig);
+	if(fin_prev >= ini_sig){
+		return 1;
+	}
+    return 0;
 }
 
 int separacion_sub(size_t fin_prev, size_t ini_sig){
-    return ((ini_sig - fin_prev) >= 75);
+        if((ini_sig - fin_prev) <= 75){
+		return 1;
+	}
+	return 0;
 }
 
 int minimo_duracion_sub(size_t ini, size_t fin){
-    return ((fin - ini) > 999);
+    if((fin - ini) < 999){
+		return 1;
+	}
+	return 0;
 }
 
 int maximo_duracion_sub(size_t ini, size_t fin){
-    return ((fin - ini) < 7000);
+    if((fin - ini) > 7000){
+		return 1;
+	}
+	return 0;
 }
 int chars_por_seg(int total_carac, size_t ini, size_t fin){
     float duracion_segs = (fin - ini) * 0.001;
-    return ((float)(total_carac / duracion_segs) > 25);
+    if((float)(total_carac / duracion_segs) > 25){
+		return 1;
+	}
+	return 0;
 }

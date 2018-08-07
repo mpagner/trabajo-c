@@ -23,7 +23,7 @@ struct sub{
 };
 
 struct arreglo_sub{
-	struct sub *array;
+	struct sub *a;
 	int ocupado;
 	int tamanio;
 };
