@@ -49,17 +49,17 @@ struct arr *insertar_opciones(int opt, int cantidad,...){
 }
 
 struct arreglo_opciones *insertar_parametros(struct arreglo_opciones *a, struct arr * dato){
-  if (a->ocupado == a->tamanio) {
-    a->tamanio *= 2;
-    a->opciones = (struct arr *)realloc(a->opciones, a->tamanio * sizeof(dato));
-  }
-  a->opciones[a->ocupado++] = *dato;
-  return a;
+
+struct arr *insertar_opciones(int opt, char * s){		//creo que aca voy a necesitar lista de argumentos variable
+  struct arr *tmp;
+	tmp = (struct arr *) malloc(sizeof(struct arr));
+	tmp->opcion = opt;
+	strcpy(tmp->args,s);	//arreglar el tema del tamaño	
+	return tmp;
+	
 }
 
-
-
-struct arreglo_opciones *recuperar_args(int argc, char **argv){
+struct arreglo_opciones *insert_operand(struct arreglo_opciones *a, struct arr * dato){
 	struct arreglo_opciones * arreglo = calloc (1, sizeof(struct arreglo_opciones));
 	init_arreglo(arreglo,sizeof(struct arr));
 
@@ -95,7 +95,6 @@ struct arreglo_opciones *recuperar_args(int argc, char **argv){
 	if(entrada == 0){
 		fprintf(stderr,"El argumento -f es obligatorio.\n");
 		exit(2);
-
 	}
 
 	printf("Nombre del archivo de entrada:%s\n",(char *) arreglo->opciones->args);
@@ -117,7 +116,6 @@ struct arreglo_opciones *recuperar_args(int argc, char **argv){
 				}
 			}
 		}
-
 	}
 
 	return arreglo;

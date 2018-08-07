@@ -52,7 +52,6 @@ struct arreglo_sub * borrar_indice(void * args,struct arreglo_sub * arr_sub){
 }
 
 
-
 struct arreglo_sub * insertar(void *args, struct arreglo_sub * arreglo){
 
 	struct sub *dato = (struct sub *) args;

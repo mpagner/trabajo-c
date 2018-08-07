@@ -81,5 +81,4 @@ void crear_salida(struct arreglo_sub * sub,FILE ** salida){
 		fprintf(*salida,"%s",sub->a[i].texto);
 		fputc('\n',*salida);
 	}
-
 }
