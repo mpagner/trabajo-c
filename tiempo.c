@@ -1,15 +1,6 @@
 #include "tiempo.h"
 #include <stdlib.h>
 
-void init_tm(t_tiempo *tm, short hs,
-               short mins, short segs, short msegs) {
-  tm->tm_hh = hs;
-  tm->tm_mm = mins;
-  tm->tm_ss = segs;
-  tm->tm_ms = msec;
-
-}
-
 size_t tm_to_millisec(short hs, short mins, short segs, short msegs) {
 
   size_t total = 0;
@@ -25,8 +16,8 @@ size_t tm_to_millisec(short hs, short mins, short segs, short msegs) {
   return total += msegs;
 }
 
-t_tiempo millisec_to_tm(size_t millis){
-
+t_tiempo * millisec_to_tm(size_t millis){
+	int tmp;
   t_tiempo *tm = (t_tiempo*)calloc(1, sizeof(t_tiempo));
   tm->hh = millis / 3600000;
   tmp = millis % 3600000;

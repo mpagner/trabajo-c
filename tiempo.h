@@ -1,5 +1,6 @@
 #ifndef TIEMPO_H
 #define TIEMPO_H 1
+#include <stdlib.h>
 
 typedef struct {
   short hh;    /* Horas. */
@@ -8,7 +9,8 @@ typedef struct {
   short ms;		/* Milisegundos. [0-999]*/
 } t_tiempo;
 
-void init_tm(t_tiempo *tm, short hh,
-               short mm, short ss, short ms);
+size_t tm_to_millisec(short hs, short mins, short segs, short msegs);
+
+t_tiempo * millisec_to_tm(size_t millis);
 
 #endif
